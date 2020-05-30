@@ -1,3 +1,5 @@
 # DanceTown
 
-# HEROKU TEST
+# HEROKU TESTS
+
+# "start": "node ./bin/www",
