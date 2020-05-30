@@ -1,2 +1,13 @@
+# npm packages
 node_modules
+
+# macOS
 .DS_Store
+
+# environment settings
+.env.local
+.nvmrc
+
+# gatsby files
+.cache/
+public
