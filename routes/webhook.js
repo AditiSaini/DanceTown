@@ -1,4 +1,6 @@
 var express = require("express");
+require("dotenv").config();
+
 var router = express.Router();
 
 router
@@ -8,6 +10,7 @@ router
     console.log("Here...");
     // Your verify token. Should be a random string.
     let VERIFY_TOKEN = "DANCETOWN_TOKEN";
+    const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
     // Parse the query params
     let mode = req.query["hub.mode"];
@@ -34,11 +37,15 @@ router
     // Checks this is an event from a page subscription
     if (body.object === "page") {
       // Iterates over each entry - there may be multiple if batched
-      body.entry.forEach(function(entry) {
+      body.entry.forEach(function (entry) {
         // Gets the message. entry.messaging is an array, but
         // will only ever contain one message, so we get index 0
         let webhook_event = entry.messaging[0];
         console.log(webhook_event);
+
+        //Get the sender PSID value
+        let sender_psid = webhook_event.sender.id;
+        console.log("Sender PSID: " + sender_psid);
       });
 
       // Returns a '200 OK' response to all requests
@@ -48,4 +55,14 @@ router
       res.sendStatus(404);
     }
   });
+
+// Handles messages events
+function handleMessage(sender_psid, received_message) {}
+
+// Handles messaging_postbacks events
+function handlePostback(sender_psid, received_postback) {}
+
+// Sends response messages via the Send API
+function callSendAPI(sender_psid, response) {}
+
 module.exports = router;
