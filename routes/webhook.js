@@ -2,6 +2,10 @@ var express = require("express");
 const request = require("request");
 require("dotenv").config();
 
+const mongoose = require("mongoose");
+
+const Users = require("../models/users");
+
 var router = express.Router();
 
 router
@@ -73,8 +77,9 @@ function handleMessage(sender_psid, received_message) {
   if (received_message.text) {
     //Create the payload for a basic text message
     response = {
-      text: `You sent the message: "${received_message.text}".`,
+      text: `Hello, You sent the message: "${received_message.text}".`,
     };
+    // Users.create({ userId: sender_psid, name: "Aditi", state: 1 });
   }
   //Sends the response message
   callSendAPI(sender_psid, response);

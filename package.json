@@ -28,6 +28,7 @@
     "express": "~4.16.1",
     "gatsby": "^2.22.12",
     "http-errors": "~1.6.3",
+    "mongoose": "^5.9.18",
     "morgan": "~1.9.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

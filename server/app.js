@@ -3,8 +3,25 @@ var express = require("express");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 var webHook = require("../routes/webhook");
+
+// Connecting to the mongodb server
+const url =
+  "mongodb+srv://Aditi:123454321@cluster0-homyn.gcp.mongodb.net/dancetown?retryWrites=true&w=majority";
+const connect = mongoose.connect(url, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+connect
+  .then(db => {
+    console.log("MongoDB connected");
+  })
+  .catch(err => {
+    console.log("MongoDB not connected");
+    console.log(err);
+  });
 
 var app = express().use(bodyParser.json());
 
