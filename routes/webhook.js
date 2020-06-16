@@ -110,11 +110,11 @@ function updateStatus(sender_psid, status, callback) {
   const update = { status: status };
   const options = { upsert: status === "GREETING" };
 
-  // ChatStatus.findOneAndUpdate(query, update, options).exec((err, cs) => {
-  //   console.log("Update status to db: ", cs);
-  //   callback(sender_psid);
-  // });
-  callback(sender_psid);
+  ChatStatus.findOneAndUpdate(query, update, options).exec((err, cs) => {
+    console.log("Update status to db: ", cs);
+    callback(sender_psid);
+  });
+  // callback(sender_psid);
 }
 
 function handleGreetingPostback(sender_psid) {
@@ -135,7 +135,7 @@ function handleGreetingPostback(sender_psid) {
       } else {
         var bodyObj = JSON.parse(body);
         const name = bodyObj.first_name;
-        greeting = "Hi" + name + "!";
+        greeting = "Hi " + name + "! ";
       }
       const message =
         greeting +
