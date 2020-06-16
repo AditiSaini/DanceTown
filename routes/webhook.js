@@ -53,6 +53,7 @@ router.post("/", (req, res) => {
       //Check if the event is a message or a postback
       //pass the event to the appropriate handler function
       if (webhook_event.message) {
+        console.log("Message is a text");
         handleMessage(sender_psid, webhook_event.message);
       } else if (webhook_event.postback) {
         console.log("Its a postback");
@@ -80,6 +81,7 @@ function handleMessage(sender_psid, received_message) {
     };
     // Users.create({ userId: sender_psid, name: "Aditi", state: 1 });
   }
+  console.log("Response is " + response);
   //Sends the response message
   callSendAPI(sender_psid, response);
 }
@@ -95,10 +97,7 @@ async function handlePostback(sender_psid, received_postback) {
     case "GREETING":
       console.log("In greeting...");
       await updateStatus(sender_psid, payload, handleGreetingPostback);
-      // response = { text: "Welcome aboard!" };
-      // console.log("in greeting...");
       break;
-    // callSendAPI(sender_psid, response);
     default:
       console.log("Can't recognise payload!");
   }
@@ -114,7 +113,6 @@ function updateStatus(sender_psid, status, callback) {
     console.log("Update status to db: ", cs);
     callback(sender_psid);
   });
-  // callback(sender_psid);
 }
 
 function handleGreetingPostback(sender_psid) {
