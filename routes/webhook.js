@@ -7,13 +7,13 @@ const ChatStatus = require("../models/chatstatus");
 
 var router = express.Router();
 
+// Your verify token. Should be a random string.
+const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
+const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+
 router
   // Adds support for GET requests to our webhook
   .get("/", (req, res) => {
-    // Your verify token. Should be a random string.
-    let VERIFY_TOKEN = process.env.VERIFY_TOKEN;
-    const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-
     // Parse the query params
     let mode = req.query["hub.mode"];
     let token = req.query["hub.verify_token"];
@@ -119,44 +119,45 @@ function updateStatus(sender_psid, status, callback) {
 
 function handleGreetingPostback(sender_psid) {
   console.log("In handle greeting postback");
-  // request(
-  //   {
-  //     url: `https://graph.facebook.com/${sender_psid}`,
-  //     qs: {
-  //       access_token: PAGE_ACCESS_TOKEN,
-  //       fields: "first_name",
-  //     },
-  //     method: "GET",
-  //   },
-  //   function (err, response, body) {
-  //     var greeting = "";
-  //     if (err) {
-  //       console.log("Error getting user's name: " + err);
-  //     } else {
-  //       var bodyObj = JSON.parse(body);
-  //       const name = bodyObj.first_name;
-  //       greeting = "Hi" + name + "!";
-  //     }
-  const message =
-    "Welcome to DanceTown, a perfect place to showcase your skills. So let's get started?";
-  greeting_payload = {
-    text: message,
-    quick_replies: [
-      {
-        content_type: "text",
-        title: "Yes!",
-        payload: "GREETING",
+  request(
+    {
+      url: `https://graph.facebook.com/${sender_psid}`,
+      qs: {
+        access_token: PAGE_ACCESS_TOKEN,
+        fields: "first_name",
       },
-      {
-        content_type: "text",
-        title: "No, maybe later",
-        payload: "GREETING",
-      },
-    ],
-  };
-  callSendAPI(sender_psid, greeting_payload);
-  // }
-  // );
+      method: "GET",
+    },
+    function (err, response, body) {
+      var greeting = "";
+      if (err) {
+        console.log("Error getting user's name: " + err);
+      } else {
+        var bodyObj = JSON.parse(body);
+        const name = bodyObj.first_name;
+        greeting = "Hi" + name + "!";
+      }
+      const message =
+        greeting +
+        "Welcome to DanceTown, a perfect place to showcase your skills. So let's get started?";
+      greeting_payload = {
+        text: message,
+        quick_replies: [
+          {
+            content_type: "text",
+            title: "Yes!",
+            payload: "GREETING",
+          },
+          {
+            content_type: "text",
+            title: "No, maybe later",
+            payload: "GREETING",
+          },
+        ],
+      };
+      callSendAPI(sender_psid, greeting_payload);
+    }
+  );
 }
 
 // Sends response messages via the Send API
