@@ -108,7 +108,7 @@ function updateStatus(sender_psid, status, callback) {
   console.log("In update status");
   const query = { user_id: sender_psid };
   const update = { status: status };
-  const options = { upsert: status === GREETING };
+  const options = { upsert: status === "GREETING" };
 
   // ChatStatus.findOneAndUpdate(query, update, options).exec((err, cs) => {
   //   console.log("Update status to db: ", cs);
