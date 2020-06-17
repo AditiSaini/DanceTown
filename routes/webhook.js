@@ -79,9 +79,9 @@ function handleMessage(sender_psid, received_message) {
     response = {
       text: `Hello, You sent the message: "${received_message.text}".`,
     };
-    // Users.create({ userId: sender_psid, name: "Aditi", state: 1 });
   }
-  console.log("Response is " + response);
+  console.log("Response is " + response.text);
+  console.log("Payload is " + received_message.quick_reply.payload);
   //Sends the response message
   callSendAPI(sender_psid, response);
 }
@@ -98,6 +98,10 @@ async function handlePostback(sender_psid, received_postback) {
       console.log("In greeting...");
       await updateStatus(sender_psid, payload, handleGreetingPostback);
       break;
+    case "LATER_DANCETOWN":
+      console.log("In later dancetown...");
+      await updateStatus(sender_psid, payload, handleLaterPostPack);
+      break;
     default:
       console.log("Can't recognise payload!");
   }
@@ -113,6 +117,20 @@ function updateStatus(sender_psid, status, callback) {
     console.log("Update status to db: ", cs);
     callback(sender_psid);
   });
+}
+
+function handleLaterPostPack(sender_psid) {
+  const noPayload = {
+    text: "That's ok my friend! Do you wanna get to know more about DanceTown?",
+    quick_replies: [
+      {
+        content_type: "text",
+        title: "Yessss",
+        payload: "KNOW_MORE",
+      },
+    ],
+  };
+  callSendAPI(sender_psid, noPayload);
 }
 
 function handleGreetingPostback(sender_psid) {
@@ -144,12 +162,12 @@ function handleGreetingPostback(sender_psid) {
           {
             content_type: "text",
             title: "Yes!",
-            payload: "GREETING",
+            payload: "START_DANCETOWN",
           },
           {
             content_type: "text",
             title: "No, maybe later",
-            payload: "GREETING",
+            payload: "LATER_DANCETOWN",
           },
         ],
       };
