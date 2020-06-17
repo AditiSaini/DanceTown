@@ -70,20 +70,27 @@ router.post("/", (req, res) => {
 });
 
 // Handles messages events
-function handleMessage(sender_psid, received_message) {
+async function handleMessage(sender_psid, received_message) {
   let response;
-
+  const payload = received_message.quick_reply.payload;
   //check if message contains text
   if (received_message.text) {
     //Create the payload for a basic text message
-    response = {
-      text: `Hello, You sent the message: "${received_message.text}".`,
-    };
+    switch (payload) {
+      case "LATER_DANCETOWN":
+        console.log("In later dancetown...");
+        await updateStatus(sender_psid, payload, handleLaterPostback);
+        break;
+      default:
+        response = {
+          text: `Hello, You sent the message: "${received_message.text}".`,
+        };
+        //Sends the response message
+        callSendAPI(sender_psid, response);
+    }
   }
   console.log("Response is " + response.text);
   console.log("Payload is " + received_message.quick_reply.payload);
-  //Sends the response message
-  callSendAPI(sender_psid, response);
 }
 
 // Handles messaging_postbacks events
@@ -97,10 +104,6 @@ async function handlePostback(sender_psid, received_postback) {
     case "GREETING":
       console.log("In greeting...");
       await updateStatus(sender_psid, payload, handleGreetingPostback);
-      break;
-    case "LATER_DANCETOWN":
-      console.log("In later dancetown...");
-      await updateStatus(sender_psid, payload, handleLaterPostPack);
       break;
     default:
       console.log("Can't recognise payload!");
@@ -119,7 +122,7 @@ function updateStatus(sender_psid, status, callback) {
   });
 }
 
-function handleLaterPostPack(sender_psid) {
+function handleLaterPostback(sender_psid) {
   const noPayload = {
     text: "That's ok my friend! Do you wanna get to know more about DanceTown?",
     quick_replies: [
