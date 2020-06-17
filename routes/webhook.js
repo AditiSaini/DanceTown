@@ -70,7 +70,7 @@ router.post("/", (req, res) => {
 });
 
 // Handles messages events
-async function handleMessage(sender_psid, received_message) {
+function handleMessage(sender_psid, received_message) {
   let response;
   const payload = received_message.quick_reply.payload;
   //check if message contains text
@@ -79,7 +79,7 @@ async function handleMessage(sender_psid, received_message) {
     switch (payload) {
       case "LATER_DANCETOWN":
         console.log("In later dancetown...");
-        await updateStatus(sender_psid, payload, handleLaterPostback);
+        updateStatus(sender_psid, payload, handleLaterPostback);
         break;
       default:
         response = {
