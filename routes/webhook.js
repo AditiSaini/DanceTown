@@ -70,7 +70,7 @@ router.post("/", (req, res) => {
 });
 
 // Handles messages events
-function handleMessage(sender_psid, received_message) {
+async function handleMessage(sender_psid, received_message) {
   let response;
   const payload = received_message.quick_reply.payload;
   //check if message contains text
@@ -79,7 +79,11 @@ function handleMessage(sender_psid, received_message) {
     switch (payload) {
       case "LATER_DANCETOWN":
         console.log("In later dancetown...");
-        updateStatus(sender_psid, payload, handleLaterPostback);
+        await updateStatus(sender_psid, payload, handleLaterPostback);
+        break;
+      case "START_DANCETOWN":
+        console.log("In start dancetown...");
+        await updateStatus(sender_psid, payload, handleStartPostback);
         break;
       default:
         response = {
@@ -120,6 +124,30 @@ function updateStatus(sender_psid, status, callback) {
     console.log("Update status to db: ", cs);
     callback(sender_psid);
   });
+}
+
+function handleStartPostback(sender_psid) {
+  const noPayload = {
+    text: "Nice! So what do you wanna do?",
+    quick_replies: [
+      {
+        content_type: "text",
+        title: "Challenge a friend",
+        payload: "CHALLENGE_FRIEND",
+      },
+      {
+        content_type: "text",
+        title: "Browse challenges",
+        payload: "BROWSE_CHALLENGES",
+      },
+      {
+        content_type: "text",
+        title: "Start a challenge",
+        payload: "START_CHALLENGE",
+      },
+    ],
+  };
+  callSendAPI(sender_psid, noPayload);
 }
 
 function handleLaterPostback(sender_psid) {
