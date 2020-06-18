@@ -85,6 +85,10 @@ async function handleMessage(sender_psid, received_message) {
         console.log("In start dancetown...");
         await updateStatus(sender_psid, payload, handleStartPostback);
         break;
+      case "START_CHALLENGE":
+        console.log("Start a challenge");
+        await updateStatus(sender_psid, payload, handleStartChallenge);
+        break;
       default:
         response = {
           text: `Hello, You sent the message: "${received_message.text}".`,
@@ -93,8 +97,6 @@ async function handleMessage(sender_psid, received_message) {
         callSendAPI(sender_psid, response);
     }
   }
-  console.log("Response is " + response.text);
-  console.log("Payload is " + received_message.quick_reply.payload);
 }
 
 // Handles messaging_postbacks events
@@ -126,28 +128,40 @@ function updateStatus(sender_psid, status, callback) {
   });
 }
 
+function handleStartChallenge(sender_psid) {}
+
 function handleStartPostback(sender_psid) {
-  const noPayload = {
-    text: "Nice! So what do you wanna do?",
-    quick_replies: [
-      {
-        content_type: "text",
-        title: "Challenge a friend",
-        payload: "CHALLENGE_FRIEND",
+  const payload = {
+    attachment: {
+      type: "template",
+      payload: {
+        template_type: "button",
+        text:
+          "Nice, I am sure you are having a great day. What would you like to do? Be funky or daring ;)",
+        buttons: [
+          {
+            type: "web_url",
+            url: "https://www.messenger.com/",
+            title: "Challenge a friend",
+            webview_height_ratio: "full",
+          },
+          {
+            type: "web_url",
+            url: "https://www.messenger.com/",
+            title: "Browse challenges",
+            webview_height_ratio: "full",
+          },
+          {
+            type: "web_url",
+            url: "https://www.messenger.com/",
+            title: "Start a challenge",
+            webview_height_ratio: "full",
+          },
+        ],
       },
-      {
-        content_type: "text",
-        title: "Browse challenges",
-        payload: "BROWSE_CHALLENGES",
-      },
-      {
-        content_type: "text",
-        title: "Start a challenge",
-        payload: "START_CHALLENGE",
-      },
-    ],
+    },
   };
-  callSendAPI(sender_psid, noPayload);
+  callSendAPI(sender_psid, payload);
 }
 
 function handleLaterPostback(sender_psid) {
