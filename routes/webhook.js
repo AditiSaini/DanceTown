@@ -141,21 +141,21 @@ function handleStartPostback(sender_psid) {
         buttons: [
           {
             type: "web_url",
-            url: "https://www.messenger.com/",
+            url: "https://jolly-mcclintock-06e37b.netlify.app/",
             title: "Challenge a friend",
-            webview_height_ratio: "full",
+            webview_height_ratio: "tall",
           },
           {
             type: "web_url",
-            url: "https://www.messenger.com/",
+            url: "https://jolly-mcclintock-06e37b.netlify.app/",
             title: "Browse challenges",
-            webview_height_ratio: "full",
+            webview_height_ratio: "tall",
           },
           {
             type: "web_url",
-            url: "https://www.messenger.com/",
+            url: "https://jolly-mcclintock-06e37b.netlify.app/",
             title: "Start a challenge",
-            webview_height_ratio: "full",
+            webview_height_ratio: "tall",
           },
         ],
       },
