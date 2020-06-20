@@ -10,6 +10,7 @@ var router = express.Router();
 // Your verify token. Should be a random string.
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+const SERVER_URL = process.env.SERVER_URL;
 
 router
   // Adds support for GET requests to our webhook
@@ -72,30 +73,69 @@ router.post("/", (req, res) => {
 // Handles messages events
 async function handleMessage(sender_psid, received_message) {
   let response;
-  const payload = received_message.quick_reply.payload;
+  // const payload = received_message.quick_reply.payload;
   //check if message contains text
   if (received_message.text) {
-    //Create the payload for a basic text message
-    switch (payload) {
-      case "LATER_DANCETOWN":
-        console.log("In later dancetown...");
-        await updateStatus(sender_psid, payload, handleLaterPostback);
-        break;
-      case "START_DANCETOWN":
-        console.log("In start dancetown...");
-        await updateStatus(sender_psid, payload, handleStartPostback);
-        break;
-      case "START_CHALLENGE":
-        console.log("Start a challenge");
-        await updateStatus(sender_psid, payload, handleStartChallenge);
+    switch (
+      received_message.text
+        .replace(/[^\w\s]/gi, "")
+        .trim()
+        .toLowerCase()
+    ) {
+      case "room preferences":
+        console.log("In room pref switch case");
+        response = {
+          attachment: {
+            type: "template",
+            payload: {
+              template_type: "button",
+              text:
+                "OK, let's set your room preferences so I won't need to ask for them in the future.",
+              buttons: [
+                {
+                  type: "web_url",
+                  url: SERVER_URL + "/options",
+                  title: "Set preferences",
+                  webview_height_ratio: "compact",
+                  messenger_extensions: true,
+                },
+              ],
+            },
+          },
+        };
+        console.log(response);
         break;
       default:
         response = {
-          text: `Hello, You sent the message: "${received_message.text}".`,
+          text: `You sent the message: "${received_message.text}".`,
         };
-        //Sends the response message
-        callSendAPI(sender_psid, response);
+        break;
     }
+    //Sends the response message
+    callSendAPI(sender_psid, response);
+  } else {
+    response = {
+      text: `Sorry, I don't understand what you mean.`,
+    };
+    //Create the payload for a basic text message
+    // switch (payload) {
+    //   case "LATER_DANCETOWN":
+    //     console.log("In later dancetown...");
+    //     await updateStatus(sender_psid, payload, handleLaterPostback);
+    //     break;
+    //   case "START_DANCETOWN":
+    //     console.log("In start dancetown...");
+    //     await updateStatus(sender_psid, payload, handleStartPostback);
+    //     break;
+    //   case "START_CHALLENGE":
+    //     console.log("Start a challenge");
+    //     await updateStatus(sender_psid, payload, handleStartChallenge);
+    //     break;
+    //   default:
+    //     response = {
+    //       text: `Hello, You sent the message: "${received_message.text}".`,
+    //     };
+    // }
   }
 }
 

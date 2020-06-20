@@ -5,7 +5,8 @@ var logger = require("morgan");
 var bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
-var webHook = require("../routes/webhook");
+var webHook = require("./routes/webhook");
+var options = require("./routes/options");
 
 // Connecting to the mongodb server
 const url =
@@ -24,7 +25,6 @@ connect
   });
 
 var app = express().use(bodyParser.json());
-
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -32,6 +32,7 @@ app.use(cookieParser());
 require("dotenv").config();
 
 app.use("/webhook", webHook);
+app.use("/", options);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
