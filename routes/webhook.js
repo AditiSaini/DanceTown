@@ -73,69 +73,72 @@ router.post("/", (req, res) => {
 // Handles messages events
 async function handleMessage(sender_psid, received_message) {
   let response;
-  // const payload = received_message.quick_reply.payload;
+  const payload = received_message.quick_reply.payload;
   //check if message contains text
   if (received_message.text) {
-    switch (
-      received_message.text
-        .replace(/[^\w\s]/gi, "")
-        .trim()
-        .toLowerCase()
-    ) {
-      case "room preferences":
-        console.log("In room pref switch case");
-        response = {
-          attachment: {
-            type: "template",
-            payload: {
-              template_type: "button",
-              text:
-                "OK, let's set your room preferences so I won't need to ask for them in the future.",
-              buttons: [
-                {
-                  type: "web_url",
-                  url: SERVER_URL + "/options",
-                  title: "Set preferences",
-                  webview_height_ratio: "compact",
-                  messenger_extensions: true,
-                },
-              ],
-            },
-          },
-        };
-        console.log(response);
+    //   switch (
+    //     received_message.text
+    //       .replace(/[^\w\s]/gi, "")
+    //       .trim()
+    //       .toLowerCase()
+    //   ) {
+    //     case "room preferences":
+    //       console.log("In room pref switch case");
+    //       response = {
+    //         attachment: {
+    //           type: "template",
+    //           payload: {
+    //             template_type: "button",
+    //             text:
+    //               "OK, let's set your room preferences so I won't need to ask for them in the future.",
+    //             buttons: [
+    //               {
+    //                 type: "web_url",
+    //                 url: SERVER_URL + "/options",
+    //                 title: "Set preferences",
+    //                 webview_height_ratio: "compact",
+    //                 messenger_extensions: true,
+    //               },
+    //             ],
+    //           },
+    //         },
+    //       };
+    //       console.log(response);
+    //       break;
+    //     default:
+    //       response = {
+    //         text: `You sent the message: "${received_message.text}".`,
+    //       };
+    //       break;
+    //   }
+    //   //Sends the response message
+    //   callSendAPI(sender_psid, response);
+    // } else {
+    //   response = {
+    //     text: `Sorry, I don't understand what you mean.`,
+    //   };
+    // Create the payload for a basic text message
+    switch (payload) {
+      case "LATER_DANCETOWN":
+        console.log("In later dancetown...");
+        await updateStatus(sender_psid, payload, handleLaterPostback);
+        break;
+      case "START_DANCETOWN":
+        console.log("In start dancetown...");
+        await updateStatus(sender_psid, payload, handleStartPostback);
+        handleStartChallenge(sender_psid);
+        break;
+      case "KNOW_MORE":
+        await updateStatus(sender_psid, payload, handleKnowMorePostback);
         break;
       default:
         response = {
-          text: `You sent the message: "${received_message.text}".`,
+          text: `Hello, You sent the message: "${received_message.text}".`,
         };
         break;
     }
     //Sends the response message
     callSendAPI(sender_psid, response);
-  } else {
-    response = {
-      text: `Sorry, I don't understand what you mean.`,
-    };
-    //Create the payload for a basic text message
-    // switch (payload) {
-    //   case "LATER_DANCETOWN":
-    //     console.log("In later dancetown...");
-    //     await updateStatus(sender_psid, payload, handleLaterPostback);
-    //     break;
-    //   case "START_DANCETOWN":
-    //     console.log("In start dancetown...");
-    //     await updateStatus(sender_psid, payload, handleStartPostback);
-    //     break;
-    //   case "START_CHALLENGE":
-    //     console.log("Start a challenge");
-    //     await updateStatus(sender_psid, payload, handleStartChallenge);
-    //     break;
-    //   default:
-    //     response = {
-    //       text: `Hello, You sent the message: "${received_message.text}".`,
-    //     };
-    // }
   }
 }
 
@@ -168,7 +171,28 @@ function updateStatus(sender_psid, status, callback) {
   });
 }
 
-function handleStartChallenge(sender_psid) {}
+function handleStartChallenge(sender_psid) {
+  response = {
+    text:
+      "Hope you enjoy the process of creating your challenges and challenging your friends!!",
+  };
+  callSendAPI(sender_psid, response);
+}
+
+function handleKnowMorePostback(sender_psid) {
+  response = {
+    text:
+      "DanceTown is a challenge hall where you can create challenges. Have fun with your firends and live your life with DanceTown :)",
+    quick_replies: [
+      {
+        content_type: "text",
+        title: "Let's start?",
+        payload: "START_DANCETOWN",
+      },
+    ],
+  };
+  callSendAPI(sender_psid, response);
+}
 
 function handleStartPostback(sender_psid) {
   const payload = {
@@ -184,18 +208,21 @@ function handleStartPostback(sender_psid) {
             url: "https://jolly-mcclintock-06e37b.netlify.app/",
             title: "Challenge a friend",
             webview_height_ratio: "tall",
+            // messenger_extensions: true,
           },
           {
             type: "web_url",
-            url: "https://jolly-mcclintock-06e37b.netlify.app/",
-            title: "Browse challenges",
+            url: "https://therealchiendat.github.io/dance-town-client/",
+            title: "Browse all challenges",
             webview_height_ratio: "tall",
+            // messenger_extensions: true,
           },
           {
             type: "web_url",
-            url: "https://jolly-mcclintock-06e37b.netlify.app/",
-            title: "Start a challenge",
+            url: "https://therealchiendat.github.io/dance-town-client/",
+            title: "Start your challenge",
             webview_height_ratio: "tall",
+            // messenger_extensions: true,
           },
         ],
       },
