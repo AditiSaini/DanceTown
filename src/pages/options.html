@@ -23,13 +23,14 @@
             let features = result.supported_features;
             if (features.includes("context")) {
               MessengerExtensions.getContext(
-                "<APP_ID>",
+                "884673221996941",
                 function success(thread_context) {
                   // success
                   document.getElementById("psid").value = thread_context.psid;
                 },
                 function error(err) {
                   // error
+                  console.log("In error");
                   console.log(err);
                 }
               );

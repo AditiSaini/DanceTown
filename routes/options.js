@@ -2,6 +2,7 @@ var express = require("express");
 require("dotenv").config();
 var router = express.Router();
 const path = require("path");
+const request = require("request");
 
 // Serve the options path and set required headers
 router.get("/options", (req, res, next) => {
@@ -23,7 +24,11 @@ router.get("/options", (req, res, next) => {
 
 // Handle postback from webview
 router.get("/optionspostback", (req, res) => {
+  console.log("In optionspostback");
   let body = req.query;
+  console.log(
+    `Body : ${body.bed} and ${body.pillows} and ${body.view} and ${body.psid}`
+  );
   let response = {
     text: `Great, I will book you a ${body.bed} bed, with ${body.pillows} pillows and a ${body.view} view.`,
   };
