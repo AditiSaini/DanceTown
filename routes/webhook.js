@@ -132,6 +132,9 @@ async function handleMessage(sender_psid, received_message) {
       case "KNOW_MORE":
         await updateStatus(sender_psid, payload, handleKnowMorePostback);
         break;
+      case "RESTART_DANCETOWN":
+        await updateStatus(sender_psid, payload, handleRestartPostback);
+        break;
       default:
         response = {
           text: `Hello, You sent the message: "${received_message.text}".`,
@@ -155,6 +158,9 @@ async function handlePostback(sender_psid, received_postback) {
       console.log("In greeting...");
       await updateStatus(sender_psid, payload, handleGreetingPostback);
       break;
+    case "END_DANCETOWN":
+      await updateStatus(sender_psid, payload, handleEndPostback);
+      break;
     default:
       console.log("Can't recognise payload!");
   }
@@ -172,10 +178,52 @@ function updateStatus(sender_psid, status, callback) {
   });
 }
 
-function handleStartChallenge(sender_psid) {
+function handleRestartPostback(sender_psid) {
+  response = {
+    text: "Welcome back dear, let's do this!!! :)",
+    quick_replies: [
+      {
+        content_type: "text",
+        title: "Yes, I am excited",
+        payload: "START_DANCETOWN",
+      },
+    ],
+  };
+  callSendAPI(sender_psid, response);
+}
+
+function handleEndPostback(sender_psid) {
   response = {
     text:
-      "Hope you enjoy the process of creating your challenges and challenging your friends!!",
+      "Loved chatting with you. Come back soon. Press restart to start again!",
+    quick_replies: [
+      {
+        content_type: "text",
+        title: "Restart?",
+        payload: "RESTART_DANCETOWN",
+      },
+    ],
+  };
+  callSendAPI(sender_psid, response);
+}
+
+function handleStartChallenge(sender_psid) {
+  response = {
+    attachment: {
+      type: "template",
+      payload: {
+        template_type: "button",
+        text:
+          "Hope you enjoy the process of creating your challenges and challenging your friends!!",
+        buttons: [
+          {
+            type: "postback",
+            title: "Let's call it a day!",
+            payload: "END_DANCETOWN",
+          },
+        ],
+      },
+    },
   };
   callSendAPI(sender_psid, response);
 }
