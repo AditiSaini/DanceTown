@@ -11,6 +11,7 @@ var router = express.Router();
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 const SERVER_URL = process.env.SERVER_URL;
+const APP_ID = process.env.APP_ID;
 
 router
   // Adds support for GET requests to our webhook
@@ -195,6 +196,8 @@ function handleKnowMorePostback(sender_psid) {
 }
 
 function handleStartPostback(sender_psid) {
+  const show_url = "https://therealchiendat.github.io/dance-town-client/";
+  const url_redirect = `http://www.facebook.com/dialog/send?app_id=${APP_ID}&link=${show_url}&redirect_uri=https://www.domain.com/`;
   const payload = {
     attachment: {
       type: "template",
@@ -205,7 +208,7 @@ function handleStartPostback(sender_psid) {
         buttons: [
           {
             type: "web_url",
-            url: "https://jolly-mcclintock-06e37b.netlify.app/",
+            url: url_redirect,
             title: "Challenge a friend",
             webview_height_ratio: "tall",
             // messenger_extensions: true,
