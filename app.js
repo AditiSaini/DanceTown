@@ -8,9 +8,10 @@ const mongoose = require("mongoose");
 var webHook = require("./routes/webhook");
 var options = require("./routes/options");
 
+require("dotenv").config();
+
 // Connecting to the mongodb server
-const url =
-  "mongodb+srv://Aditi:123454321@cluster0-homyn.gcp.mongodb.net/dancetown?retryWrites=true&w=majority";
+const url = process.env.MONGO_URL;
 const connect = mongoose.connect(url, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
